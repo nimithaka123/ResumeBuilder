@@ -26,6 +26,7 @@
       </div>
     </div>
     {/if}
+    <Modal/>
   </main>
   
   
@@ -34,19 +35,28 @@
     import {basicDetailsData, updateBasicDetails} from '../../store/resume.js'
     import Certifications from "./Certifications.svelte";
 
+    import { Modal, getModalStore } from '@skeletonlabs/skeleton';
+    import { initializeStores } from '@skeletonlabs/skeleton';		
+    initializeStores();
+    const modalStore = getModalStore();
+
+
     let showCertificates = false
     let inputs = [{
       network: '',
       url: ''
     }]
+
     function addInput() {
       inputs = [...inputs, {network:'',url: ''}]
     }
+
     function removeInput() {
       inputs.pop();
       inputs = [...inputs]; // Trigger reactivity
     }
-    if($basicDetailsData?.social_media_profile) {
+
+    if($basicDetailsData?.social_media_profile?.length) {
       inputs = $basicDetailsData.social_media_profile.map(sm => ({
         network: sm.network || '',
         url: sm.url || ''
@@ -56,6 +66,7 @@
     function toggleComponent() {
       showCertificates = true
     }
+
     async function formSubmit() {
       const socialMedia = inputs.map(sm => ({
         network: sm.network,
@@ -69,24 +80,42 @@
         try {
           let updatedData = $basicDetailsData
           const response = await axios.put(`http://localhost:5173/api/${updatedData.id}`, updatedData)
-          console.log('edited successfully', updatedData)
-
+          if(response.status === 200) {
+            alertMessage('Saved', 'Successfully Saved')
+        }
+        else {
+          alertMessage('error', 'Oops, something went wrong')
+        }
         }
         catch(error) {
+          alertMessage('error', 'Oops, something went wrong')
           console.log('error', error);
         }
 
       }
       else {
         try {
-        const response = await axios.post(`http://localhost:5173/api/`, currentFormData)
+        const response = await axios.post(`http://localhost:5173/api`, currentFormData)
         if(response.status === 200) {
-          console.log('successfully updated')
+          alertMessage('Saved', 'Successfully Saved')
+        }
+        else {
+          alertMessage('error', 'Oops, something went wrong')
         }
       }
       catch(error) {
-        console.log('error', error); //testing
+        alertMessage('error', 'Oops, something went wrong')
+        console.log('error', error); 
       }
       }
+    }
+
+    function alertMessage(head, message) {
+      const modal = {
+      type: 'alert',
+      title: head,
+      body: message
+      };
+      modalStore.trigger(modal);
     }
   </script>

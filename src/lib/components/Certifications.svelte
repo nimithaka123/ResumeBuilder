@@ -56,7 +56,7 @@
       endYear: ''
     }]
 
-    if($basicDetailsData?.certifications) {
+    if($basicDetailsData?.certifications?.length) {
       certificationInputFields = $basicDetailsData.certifications.map(cert => ({
         certificationName: cert.certificate_name || '',
         url: cert.url || '',
@@ -64,7 +64,7 @@
         endYear: cert.end_year
       }))
     }
-    
+
     function toggleComponentForward() {
       const certifications = certificationInputFields.map(cert => ({
         certificate_name: cert.certificationName,
