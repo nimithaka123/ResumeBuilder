@@ -56,13 +56,18 @@
     let showExperience = false
 
     function toggleComponent() {
-      const skillData = skillInputFields.map(skill => ({
+      const hasSkills = skillInputFields.some(sk => {
+        return Object.values(sk).some(value => value !== '')
+      })
+      if(hasSkills) {
+        const skillData = skillInputFields.map(skill => ({
         skill_name: skill.skillName,
         skill_level: skill.skillLevel
       }))
-      const currentFormData = $basicDetailsData
-      currentFormData.skills = skillData
-      updateBasicDetails(currentFormData)
+        const currentFormData = $basicDetailsData
+        currentFormData.skills = skillData
+        updateBasicDetails(currentFormData)
+      }
       showCertificate = true
     }
     function toggleComponentBackWard() {

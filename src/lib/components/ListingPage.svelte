@@ -54,9 +54,11 @@ async function deleteResume(id) {
   console.log('id', id)
   try {
     const response = await axios.delete(`http://localhost:5173/api/${id}`)
-    if(response.data.id) {
-      getBasicDetails()
-      alertMessage()
+    if(response.status == '200') {
+      responseData = responseData.filter(data => data.id !== id)
+      setTimeout(() => {
+        alertMessage()
+      },500)
     }
   }
   catch (error) {
@@ -87,6 +89,7 @@ async function editResume(id) {
   }
 }
 function confirmation(id) {
+  modalStore.clear()
   const modal = {
       type: 'confirm',
       title: 'Please Confirm',

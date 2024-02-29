@@ -42,6 +42,7 @@ export async function POST(data) {
             dob: e.cast(e.cal.local_date, person.dob),
             email: e.cast(e.str, person.email),
             phone: e.cast(e.str, person.phone),
+            summary: e.cast(e.str, person.summary),
             address: e.insert(e.Address, {
                city: e.cast(e.str, person.address.city),
                country: e.cast(e.str, person.address.country),

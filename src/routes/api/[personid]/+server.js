@@ -60,6 +60,100 @@ export async function GET(body) {
 
    let data = await  a.request.json()
    console.log('dataaaaaaaaaaaaaaa', data)
+   const work_experience = data.work_experience?.length ?  e.assert_distinct(
+      e.set(
+         ...data.work_experience.map((exp) => {
+            if (exp.id)
+               return e.update(e.WorkExperience, () => ({
+                  filter_single: { id: exp.id },
+                  set: {
+                    employer: exp.employer,
+                    job_title: exp.job_title,
+                    job_description: exp.job_description,
+                    start_month: exp.start_month,
+                    start_year: exp.start_year,
+                    end_month: exp.end_month,
+                    end_year: exp.end_year
+                  }
+               }));
+            else
+               return e.insert(e.WorkExperience, {
+                  employer: exp.employer,
+                  job_title: exp.job_title,
+                  job_description: exp.job_description,
+                  start_month: exp.start_month,
+                  start_year: exp.start_year,
+                  end_month: exp.end_month,
+                  end_year: exp.end_year
+               });
+         })
+      )
+   ) : null
+
+   const skill = data.skills?.length ? e.assert_distinct(
+      e.set(
+         ...data.skills.map((sk) => {
+            if (sk.id)
+               return e.update(e.Skills, () => ({
+                  filter_single: { id: sk.id },
+                  set: {
+                   skill_name: sk.skill_name,
+                   skill_level: sk.skill_level
+                  }
+               }));
+            else
+               return e.insert(e.Skills, {
+                  skill_name: sk.skill_name,
+                  skill_level: sk.skill_level
+               });
+         })
+      )
+   ): null
+
+   const certification = data.certifications?.length ? e.assert_distinct(
+      e.set(
+         ...data.certifications.map((cert) => {
+            if (cert.id)
+               return e.update(e.Certifications, () => ({
+                  filter_single: { id: cert.id },
+                  set: {
+                   certificate_name: cert.certificate_name,
+                   url: cert.url,
+                   start_year: cert.start_year,
+                   end_year: cert.end_year
+                  }
+               }));
+            else
+               return e.insert(e.Certifications, {
+                  certificate_name: cert.certificate_name,
+                  url: cert.url,
+                  start_year: cert.start_year,
+                  end_year: cert.end_year
+               });
+         })
+      )
+   ): null
+
+   const social_media_profile = data.social_media_profile?.length ? e.assert_distinct(
+      e.set(
+         ...data.social_media_profile.map((sm) => {
+            if (sm.id)
+               return e.update(e.SocialMediaProfile, () => ({
+                  filter_single: { id: sm.id },
+                  set: {
+                   network: sm.network,
+                   url: sm.url
+                  }
+               }));
+            else
+               return e.insert(e.SocialMediaProfile, {
+                  network: sm.network,
+                  url: sm.network
+               });
+         })
+      )
+   ): null
+
    let query = e.update(e.PersonalDetails, () => ({
       filter_single: {id : b},
       set: {
@@ -69,6 +163,7 @@ export async function GET(body) {
          dob: data.dob,
          email: data.email,
          phone: data.phone,
+         summary: data.summary,
          address: e.update(e.Address, () => ({
             filter_single: {id: data.address.id},
             set: {
@@ -106,96 +201,10 @@ export async function GET(body) {
                })
             )
          ),
-         work_experience: e.assert_distinct(
-            e.set(
-               ...data.work_experience.map((exp) => {
-                  if (exp.id)
-                     return e.update(e.WorkExperience, () => ({
-                        filter_single: { id: exp.id },
-                        set: {
-                          employer: exp.employer,
-                          job_title: exp.job_title,
-                          job_description: exp.job_description,
-                          start_month: exp.start_month,
-                          start_year: exp.start_year,
-                          end_month: exp.end_month,
-                          end_year: exp.end_year
-                        }
-                     }));
-                  else
-                     return e.insert(e.WorkExperience, {
-                        employer: exp.employer,
-                        job_title: exp.job_title,
-                        job_description: exp.job_description,
-                        start_month: exp.start_month,
-                        start_year: exp.start_year,
-                        end_month: exp.end_month,
-                        end_year: exp.end_year
-                     });
-               })
-            )
-         ),
-         skills: e.assert_distinct(
-            e.set(
-               ...data.skills.map((sk) => {
-                  if (sk.id)
-                     return e.update(e.Skills, () => ({
-                        filter_single: { id: sk.id },
-                        set: {
-                         skill_name: sk.skill_name,
-                         skill_level: sk.skill_level
-                        }
-                     }));
-                  else
-                     return e.insert(e.Skills, {
-                        skill_name: sk.skill_name,
-                        skill_level: sk.skill_level
-                     });
-               })
-            )
-         ),
-         certifications: e.assert_distinct(
-            e.set(
-               ...data.certifications.map((cert) => {
-                  if (cert.id)
-                     return e.update(e.Certifications, () => ({
-                        filter_single: { id: cert.id },
-                        set: {
-                         certificate_name: cert.certificate_name,
-                         url: cert.url,
-                         start_year: cert.start_year,
-                         end_year: cert.end_year
-                        }
-                     }));
-                  else
-                     return e.insert(e.Certifications, {
-                        certificate_name: cert.certificate_name,
-                        url: cert.url,
-                        start_year: cert.start_year,
-                        end_year: cert.end_year
-                     });
-               })
-            )
-         ),
-         social_media_profile: e.assert_distinct(
-            e.set(
-               ...data.social_media_profile.map((sm) => {
-                  if (sm.id)
-                     return e.update(e.SocialMediaProfile, () => ({
-                        filter_single: { id: sm.id },
-                        set: {
-                         network: sm.network,
-                         url: sm.url
-                        }
-                     }));
-                  else
-                     return e.insert(e.SocialMediaProfile, {
-                        network: sm.network,
-                        url: sm.network
-                     });
-               })
-            )
-         ),   
+         work_experience,
+         skills: skill,
+         certifications: certification,
+         social_media_profile,   
       }
    }))
    const result = await query.run(client)

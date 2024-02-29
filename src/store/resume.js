@@ -7,6 +7,7 @@ export const basicDetailsData = writable({
     dob: '',
     email: '',
     phone: '',
+    summary: '',
     address: {
         city: '',
         country: '',
@@ -19,6 +20,14 @@ export const basicDetailsData = writable({
     social_media_profile: []
 })
 
+basicDetailsData.subscribe(value => {
+    console.log('Store value changed:', value);
+});
+
 export function updateBasicDetails(data) {
+    basicDetailsData.set(data)
+}
+
+export function clearDetails(data = null) {
     basicDetailsData.set(data)
 }

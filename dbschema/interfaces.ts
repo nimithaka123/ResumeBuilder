@@ -94,8 +94,9 @@ export interface PersonalDetails extends std.$Object {
   "dob": edgedb.LocalDate;
   "first_name": string;
   "last_name": string;
-  "email"?: string | null;
-  "phone"?: string | null;
+  "email": string;
+  "phone": string;
+  "summary": string;
 }
 export interface Skills extends std.$Object {
   "skill_level"?: string | null;

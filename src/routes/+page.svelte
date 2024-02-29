@@ -1,5 +1,7 @@
 <script>
   import ListingPage from "$lib/components/ListingPage.svelte";
+  import SimpleResumeTemplate from "$lib/components/simpleResumeTemplate.svelte";
+  // import ModernResumeTemplate from "$lib/components/ModernResumeTemplate.svelte";
 
 </script>
 
@@ -10,6 +12,8 @@
   <ListingPage/>
 </main>
 
+<!-- <SimpleResumeTemplate/> -->
 
+<!-- <ModernResumeTemplate/> -->
 
    

@@ -50,7 +50,12 @@
             <span>Email</span>
             <input data-error="emailErr" data-rule="['required', 'email']"  class="input p-3 rounded-lg border validate" type="text" on:blur={validateInput} placeholder="Email" bind:value={email} />
             <span class="err-msg text-xs" id="emailErr"></span>
-          </label>  
+          </label>
+          <label class="label">
+            <span>Summary</span>
+            <textarea data-error="summaryErr" data-rule="['required']" class="input p-3 textarea validate" rows="4" placeholder="Summary" on:blur={validateInput} bind:value={summary} />
+            <span class="err-msg text-xs" id="summaryErr"></span>
+          </label>
         </form>
         <div class="flex justify-between">
           <div></div>
@@ -68,7 +73,7 @@
     import {customValidation} from '../../utilities/validations.js'
     
 
-    let {first_name, last_name, address} = $basicDetailsData
+    let {first_name, last_name, address} = $basicDetailsData || {}
 
     let firstName = first_name || ''
     let lastName = last_name || ''
@@ -79,6 +84,7 @@
     let pincode = address?.pincode || ''
     let phone = $basicDetailsData?.phone || ''
     let email = $basicDetailsData?.email || ''
+    let summary = $basicDetailsData?.summary || ''
 
     let showEducation = false
 
@@ -104,6 +110,7 @@
         basicDetails.designation = designation
         basicDetails.email = email
         basicDetails.phone = phone
+        basicDetails.summary = summary
         basicDetails.address.city = city
         basicDetails.address.country = country
         basicDetails.address.pincode = pincode

@@ -17,14 +17,15 @@
             <span>Employer</span>
             <input class="input p-3 rounded-lg border" type="text" placeholder="Employer" bind:value={experienceInputField.employer} />
           </label>
-          <label class="label">
+          <!-- <label class="label">
             <span>Location</span>
             <input class="input p-3 rounded-lg border" type="text" placeholder="Location" bind:value={experienceInputField.location} />
-          </label>
+          </label> -->
           <label class="label">
             <span>Job Description</span>
             <input class="input p-3 rounded-lg border" type="text" placeholder="Job Description" bind:value={experienceInputField.jobDescription} />
           </label>
+          <div></div>
           <label class="label">
             <span>Start Date</span>
             <div class="grid grid-cols-2 gap-4">
@@ -60,6 +61,7 @@
     import {basicDetailsData, updateBasicDetails} from '../../store/resume.js'
     import Skills from "./Skills.svelte";
     import Education from "./Education.svelte";
+    import { div } from 'edgedb/dist/primitives/bigint.js';
 
     let showSkill = false
     let showEducation = false
@@ -68,7 +70,6 @@
       jobTitle : '',
       employer: '',
       jobDescription: '',
-      location: '',
       startDateMonth: '',
       startDateYear: '',
       endDateMonth: '',
@@ -81,7 +82,6 @@
         jobTitle: exp.job_title || '',
         jobDescription: exp.job_description || '',
         employer: exp.employer || '',
-        location: exp.location || '',
         startDateMonth: exp.start_month || '',
         startDateYear: exp.start_year || '',
         endDateMonth: exp.end_month || '',
@@ -90,10 +90,13 @@
     }
     
     function toggleComponent() {
-      const experienceData = experienceInputFields.map(exp => ({
+      const hasExperience = experienceInputFields.some(exp => {
+        return Object.values(exp).some(value => value !== '')
+      })
+      if(hasExperience) {
+        const experienceData = experienceInputFields.map(exp => ({
         job_title: exp.jobTitle,
         employer: exp.employer,
-        location: exp.location,
         job_description: exp.jobDescription,
         start_month: exp.startDateMonth,
         start_year: exp.startDateYear,
@@ -103,6 +106,7 @@
       const currentFormData = $basicDetailsData
       currentFormData.work_experience = experienceData
       updateBasicDetails(currentFormData)
+      }
       showSkill = true
     }
     function toggleComponentBackWard() {
@@ -113,7 +117,6 @@
         jobTitle : '',
         employer: '',
         jobDescription: '',
-        location: '',
         startDateMonth: '',
         startDateYear: '',
         endDateMonth: '',

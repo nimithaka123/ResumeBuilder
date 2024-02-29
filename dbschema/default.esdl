@@ -5,6 +5,7 @@ type PersonalDetails {
     required dob: cal::local_date;
     required email: str;
     required phone: str; 
+    required summary: str;
     designation: str;
     address : Address {
         on source delete delete target

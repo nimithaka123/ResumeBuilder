@@ -66,15 +66,20 @@
     }
 
     function toggleComponentForward() {
-      const certifications = certificationInputFields.map(cert => ({
+      const hasCertifications = certificationInputFields.some(exp => {
+        return Object.values(exp).some(value => value !== '')
+      })
+      if(hasCertifications) {
+        const certifications = certificationInputFields.map(cert => ({
         certificate_name: cert.certificationName,
         url: cert.url,
         start_year: cert.startYear,
         end_year: cert.endYear
       }))
-      const currentFormData = $basicDetailsData
-      currentFormData.certifications = certifications
-      updateBasicDetails(currentFormData)
+        const currentFormData = $basicDetailsData
+        currentFormData.certifications = certifications
+        updateBasicDetails(currentFormData)
+      }
       showSocialMedia = true
     }
 
