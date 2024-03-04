@@ -6,6 +6,25 @@ const customValidation = {
             },
             message: 'Required'
         },
+        firstLetter: {
+            validate: function(input) {
+                if(input.value) {
+                    const capitalRegex = /^[A-Z]/;
+                    return capitalRegex.test(input.value)
+                }
+                return true
+            },
+            message: 'First letter should be capital'
+        },
+        age: {
+            validate: function(input) {
+                var parts = input.value.split("-");
+                let dtDOB = new Date(parts[0] + "-" + parts[1] + "-" + parts[2]); 
+                var dtCurrent = new Date()
+                return dtCurrent.getFullYear() - dtDOB.getFullYear() >= 18
+            },
+            message: 'Age must be 18 years or older'
+        },
         email: {
             validate: function(input) {
                 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -26,6 +45,13 @@ const customValidation = {
                 return dateRegrex.test(input.value)
             },
             message: "Please enter date in YYYY-MM-DD format"
+        },
+        year: {
+            validate: function(input) {
+                const yearRegrex = /^(?:19|20)\d{2}$/
+                return yearRegrex.test(input.value)
+            },
+            message: 'Please enter a valid year'
         }
     },
     validate: function (input, rules) {

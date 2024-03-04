@@ -1,6 +1,7 @@
 <script>
-    import { basicDetailsData } from "../../store/resume";
     import axios from 'axios';
+    import { onMount } from 'svelte';
+    import { basicDetailsData } from "../../store/resume";
     import TemplateChoice from './TemplateChoice.svelte';
 
     import { Modal, getModalStore } from '@skeletonlabs/skeleton';
@@ -10,6 +11,18 @@
 
     let candidateDetails = $basicDetailsData
     let showTemplateChoice = false
+
+    let html2pdf;
+
+    onMount(async () => {
+        try {
+            const module = await import('html2pdf.js')
+            html2pdf = module.default
+        }
+        catch(error) {
+            console.log('Error importing html2pdf', error);
+        }
+    })
   
     async function formSubmit() {
         if(candidateDetails?.id) {
@@ -59,13 +72,13 @@
     }
 
     function printResume() {
-        const content = document.getElementById('resume-content')?.innerHTML
-        const originalContent = document.body.innerHTML
-        document.body.innerHTML = content
-
-        window.print()
-        window.close()
-        document.body.innerHTML = originalContent
+        try {
+            let element = document.getElementById('resume-content')
+            html2pdf(element)
+        }
+        catch(error) {
+            console.log('Error while downloading pdf:', error);
+        }
     }
 
 
@@ -76,8 +89,8 @@
     {#if showTemplateChoice }
     <TemplateChoice/>
     {:else}
-    <div id="resume-content" class="main-page">
-        <div class="sub-page">
+    <div class="main-page">
+        <div id="resume-content" class="sub-page">
             <div class="header text-center">
                 <h1 class="text-2xl font-extrabold uppercase">{candidateDetails.first_name} {candidateDetails.last_name}</h1>
                 <h3 class="text-lg font-normal">{candidateDetails.designation}</h3>
@@ -149,9 +162,9 @@
             </div>
         </div>
     <div class="flex justify-center">
-        <button type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 w-40 p-3" on:click={backToForm}>Back</button>
-        <button type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 w-40 p-3" on:click={formSubmit}>Save</button>
-        <button type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 w-40 p-3" on:click={printResume}>Print</button>
+        <button type="button" class="border-2 border-gray-400 hover:bg-gray-400 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 w-40 p-3" on:click={backToForm}>Back</button>
+        <button type="button" class="border-2 border-gray-400 hover:bg-gray-400 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 w-40 p-3" on:click={formSubmit}>Save</button>
+        <button type="button" class="border-2 border-gray-400 hover:bg-gray-400 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 w-40 p-3" on:click={printResume}>Print</button>
     </div>
     {/if}
     <Modal/>     
@@ -164,7 +177,6 @@
   margin: 0 auto;
   padding: 0;
   font-size: 12pt;
-  background: rgb(204,204,204); 
 }
 * {
   box-sizing: border-box;
@@ -175,32 +187,13 @@
   min-height: 297mm;
   margin: 10mm auto;
   background: white;
-  box-shadow: 0 0 0.5cm rgba(0,0,0,0.5);
 }
 .sub-page {
   padding: 1cm;
-  min-height: 297mm;
- 
-}
-@page {
-  size: A4;
   margin: 0;
+  min-height: calc(297mm - 2cm);
 }
-@media print {
-  html, body {
-    width: 210mm;
-    height: 297mm;        
-  }
-  .main-page {
-    margin: 0;
-    border: initial;
-    border-radius: initial;
-    width: initial;
-    min-height: initial;
-    box-shadow: initial;
-    /* background: initial; */
-    page-break-after: always;
-    background: red;
-  }
-}
+/* #resume-content, #resume-content * {
+    page-break-inside: avoid;
+} */
 </style>

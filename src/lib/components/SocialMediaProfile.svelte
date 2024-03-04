@@ -2,32 +2,32 @@
     {#if showCertificates}
       <Certifications/>
     {:else if showPreview}
-      <!-- <ModernResumeTemplate/> -->
-      <!-- <SimpleResumeTemplate/> -->
-      <!-- <IntermediateResumeTemplate/> -->
       <TemplateChoice/>
     {:else}
     <div class="container mx-auto mt-10">
-      <h2 class="text-4xl">Social Media Profile</h2>
+      <h2 class="text-4xl text-slate-600">Social Media Profile</h2>
       <div class="form-container mt-5">
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 gap-4">
           {#each inputs as input, index}
-          <label class="label">
-            <span>Network</span>
-            <input class="input p-3 rounded-lg border" type="text" placeholder="Network" bind:value={input.network}/>
-          </label>
-          <label class="label">
-            <span>Url</span>
-            <input class="input p-3 rounded-lg border" type="text" placeholder="Url" bind:value={input.url} />
-          </label>
+          <div class="flex" class:mt-12={index > 0}>
+            <label class="label w-1/2">
+              <span>Network</span>
+              <input class="input p-3 rounded-lg border" type="text" placeholder="Network" bind:value={input.network}/>
+            </label>
+            <label class="label w-1/2 ml-4">
+              <span>Url</span>
+              <input class="input p-3 rounded-lg border" type="text" placeholder="Url" bind:value={input.url} />
+            </label>
+            <button class="bg-gray-400 rounded-lg p-2 ml-4 mt-6 w-28 action-btn" disabled='{buttonDisable(index)}' on:click={()=>deleteSocialMedia(index)}><span class="font-medium">DELETE</span></button>
+          </div>
           {/each}
-          <!-- <button type="button" class="text-left " on:click={removeInput}><span class="text-blue-950">- Remove</span></button> -->
-          <div></div>
-          <button type="button" class="text-right " on:click={addInput}><span class="text-blue-950">+ Add</span></button>
+          <div class="flex justify-end">
+            <button type="button" class="bg-gray-400 rounded-lg w-28 action-btn"  on:click={addInput}><span class="font-medium">ADD</span></button>
+         </div>
         </div>
         <div class="flex justify-between">
-          <button type="button" class="border-2 border-blue-800 rounded-lg p-3 w-40 mt-10" on:click={toggleComponent}>Back</button>
-          <button type="button" class="border-2 border-blue-800 rounded-lg p-3 w-40 mt-10" on:click={toPreviewPage}>Preview</button> 
+          <button type="button" class="border-2 border-gray-400 rounded-lg p-3 w-40 mt-10" on:click={toggleComponent}><span class="font-medium">BACK</span></button>
+          <button type="button" class="border-2 border-gray-400 rounded-lg p-3 w-40 mt-10" on:click={toPreviewPage}><span class="font-medium">NEXT</span></button>
         </div>
       </div>
     </div>
@@ -37,13 +37,8 @@
   
   
   <script>
-    import axios from 'axios';
-    import {goto} from '$app/navigation'
     import {basicDetailsData, updateBasicDetails} from '../../store/resume.js'
     import Certifications from "./Certifications.svelte";
-    import ModernResumeTemplate from './ModernResumeTemplate.svelte';
-    import SimpleResumeTemplate from './simpleResumeTemplate.svelte';
-    import IntermediateResumeTemplate from './IntermediateResumeTemplate.svelte';
     import TemplateChoice from './TemplateChoice.svelte';
 
     import { Modal, getModalStore } from '@skeletonlabs/skeleton';
@@ -63,11 +58,6 @@
       inputs = [...inputs, {network:'',url: ''}]
     }
 
-    // function removeInput() {
-    //   inputs.pop();
-    //   inputs = [...inputs]; 
-    // }
-
     if($basicDetailsData?.social_media_profile?.length) {
       inputs = $basicDetailsData.social_media_profile.map(sm => ({
         network: sm.network || '',
@@ -80,52 +70,19 @@
     }
 
     async function toPreviewPage() {
-      const hasSocialMedia = inputs.some(sm => {
+      const socialMedia = inputs.filter(sm => {
         return Object.values(sm).some(value => value !== '')
       })
-      if(hasSocialMedia) {
-        const socialMedia = inputs.map(sm => ({
+      if(socialMedia?.length) {
+        const socialMediaData = inputs.map(sm => ({
         network: sm.network,
         url: sm.url
       }))
         const currentFormData = $basicDetailsData
-        currentFormData.social_media_profile = socialMedia
+        currentFormData.social_media_profile = socialMediaData
         updateBasicDetails(currentFormData)
       }
       showPreview = true
-      // if($basicDetailsData?.id) {
-      //   try {
-      //     let updatedData = $basicDetailsData
-      //     const response = await axios.put(`http://localhost:5173/api/${updatedData.id}`, updatedData)
-      //     if(response.status === 200) {
-      //       alertMessage('Saved', 'Successfully Saved')
-      //   }
-      //   else {
-      //     alertMessage('error', 'Oops, something went wrong')
-      //   }
-      //   }
-      //   catch(error) {
-      //     alertMessage('error', 'Oops, something went wrong')
-      //     console.log('error', error);
-      //   }
-
-      // }
-      // else {
-        // goto('/preview-simple-template')
-      //   try {
-      //   const response = await axios.post(`http://localhost:5173/api`, currentFormData)
-      //   if(response.status === 200) {
-      //     alertMessage('Saved', 'Successfully Saved')
-      //   }
-      //   else {
-      //     alertMessage('error', 'Oops, something went wrong')
-      //   }
-      // }
-      // catch(error) {
-      //   alertMessage('error', 'Oops, something went wrong')
-      //   console.log('error', error); 
-      // }
-      // }
     }
 
     function alertMessage(head, message) {
@@ -136,4 +93,20 @@
       };
       modalStore.trigger(modal);
     }
+    function deleteSocialMedia(index) {
+      inputs = inputs.filter((_, i) => i !== index);
+    }
+    function buttonDisable(index) {
+        return index === 0
+    }
   </script>
+
+<style>
+  .action-btn {
+      height: 50px;
+  }
+  .action-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+</style>

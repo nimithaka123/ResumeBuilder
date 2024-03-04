@@ -1,17 +1,17 @@
 <Modal />
 <div class="table-container flex flex-col justify-center items-center">
   <div>
-    <h1 class="text-4xl mt-5">Resumes</h1>
+    <h1 class="text-4xl mt-5 text-cyan-600 font-bold">Resumes</h1>
   </div>
-  <table class="border-2 border-gray-900 w-1/2 mt-5">
+  <table class="border-2 border-cyan-600 w-1/2 mt-5">
     <thead class="text-white">
       <tr>
-        <th class="py-3 bg-black">S. NO</th>
-        <th class="py-3 bg-black">Name</th>
-        <th class="py-3 bg-black">Profession</th>
-        <th class="py-3 bg-black">Email</th>
-        <th class="py-3 bg-black">Phone</th>
-        <th class="py-3 bg-black">Actions</th>
+        <th class="py-3 bg-slate-400">S. NO</th>
+        <th class="py-3 bg-slate-400">Name</th>
+        <th class="py-3 bg-slate-400">Profession</th>
+        <th class="py-3 bg-slate-400">Email</th>
+        <th class="py-3 bg-slate-400">Phone</th>
+        <th class="py-3 bg-slate-400">Actions</th>
       </tr>
     </thead>
     <tbody class="text-center">
@@ -23,8 +23,8 @@
           <td class="py-3">{data.email}</td>
           <td class="py-3">{data.phone}</td>
           <td>
-            <button class="border-2 border-blue-800 rounded-lg w-24" on:click={() => editResume(data.id)}>Edit</button>
-            <button class="border-2 border-blue-800 rounded-lg w-24 ml-3" on:click={confirmation(data.id)}>Delete</button>
+            <button class="bg-gray-400 rounded-lg w-24 h-8" on:click={() => editResume(data.id)}><span class="font-medium">Edit</span></button>
+            <button class="bg-gray-400 rounded-lg w-24 ml-3 h-8" on:click={confirmation(data.id)}><span class="font-medium">Delete</span></button>
           </td>
         </tr>
       {/each}

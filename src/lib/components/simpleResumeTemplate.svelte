@@ -4,9 +4,9 @@
         {:else}
         <div class="bg-gray-100 text-gray-800">
             <div class="container mx-auto py-10 px-5">
-                <div id="resume-content" class="main-page">
-                    <div class="sub-page">
-                        <div class="flex items-center justify-between">
+                <div class="main-page">
+                    <div id="resume-content" class="sub-page">
+                        <div class="items-center justify-between">
                             <div>
                                 <h2 class="text-2xl font-bold">{candidateDetails.first_name} {candidateDetails.last_name}</h2>
                                 <p class="text-base font-medium">{candidateDetails.designation}</p>
@@ -77,9 +77,9 @@
                 </div>   
             </div>
             <div id="btn-grp" class="flex justify-center">
-                <button type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 w-40 p-3" on:click={backToForm}>Back</button>
-                <button type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 w-40 p-3" on:click={formSubmit}>Save</button>
-                <button type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 w-40 p-3" on:click={printResume}>Print</button>
+                <button type="button" class="border-2 border-gray-400 hover:bg-gray-400  font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 w-40 p-3" on:click={backToForm}>Back</button>
+                <button type="button" class="border-2 border-gray-400 hover:bg-gray-400  font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 w-40 p-3" on:click={formSubmit}>Save</button>
+                <button type="button" class="border-2 border-gray-400 hover:bg-gray-400  font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 w-40 p-3" on:click={printResume}>Print</button>
             </div>
         </div>
         {/if}
@@ -88,17 +88,31 @@
 
 <script>
     import axios from 'axios';
+    import { onMount } from 'svelte';
     import { basicDetailsData } from "../../store/resume";
     import TemplateChoice from './TemplateChoice.svelte';
 
     import { Modal, getModalStore } from '@skeletonlabs/skeleton';
     import { initializeStores } from '@skeletonlabs/skeleton';		
+    // import { html2pdf } from 'html2pdf.js';
     initializeStores();
     const modalStore = getModalStore();
 
     let showTemplateChoice = false
 
     let candidateDetails = $basicDetailsData
+
+    let html2pdf
+
+    onMount(async () => {
+        try {
+            const module = await import ('html2pdf.js')
+            html2pdf = module.default
+        }
+        catch(error) {
+            console.log('Error importing html2pdf', error);
+        }
+    })
 
     async function formSubmit() {
         if(candidateDetails?.id) {
@@ -148,12 +162,14 @@
     }
 
     function printResume() {
-        const content = document.getElementById('resume-content')?.innerHTML
-        const originalContent = document.body.innerHTML
-        document.body.innerHTML = content
-        window.print()
-        document.body.innerHTML = originalContent;
-        // print()
+
+        try {
+            let element = document.getElementById('resume-content')
+            html2pdf(element)
+        }
+        catch(error) {
+            console.log('Error while downloading pdf:', error)
+        }
     }
 </script>
 
@@ -164,7 +180,6 @@
   margin: 0 auto;
   padding: 0;
   font-size: 12pt;
-  background: rgb(204,204,204); 
 }
 * {
   box-sizing: border-box;
@@ -174,31 +189,19 @@
   width: 210mm;
   min-height: 297mm;
   margin: 10mm auto;
-  background: white;
-  box-shadow: 0 0 0.5cm rgba(0,0,0,0.5);
+  border: 2px solid #B4B4B8;
 }
 .sub-page {
   padding: 1cm;
-  min-height: 297mm;
+  margin: 0;
+    min-height: calc(297mm - 2cm); 
+}
+.sub-page, .sub-page * {
+    page-break-inside: avoid;
 }
 @page {
-  size: A4;
-  margin: 0;
+    size: A4;
+    margin: 2.5em;
 }
-@media print {
-  html, body {
-    width: 210mm;
-    height: 297mm;        
-  }
-  .main-page {
-    margin: 0;
-    border: initial;
-    border-radius: initial;
-    width: initial;
-    min-height: initial;
-    box-shadow: initial;
-    background: initial;
-    page-break-after: always;
-  }
-}
+
 </style>
